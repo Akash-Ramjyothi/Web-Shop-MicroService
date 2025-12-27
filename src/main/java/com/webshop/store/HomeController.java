@@ -11,36 +11,75 @@ public class HomeController {
 
     private static final AtomicInteger hitCounter = new AtomicInteger(0);
 
+    // Thresholds for traffic classification
+    private static final int HIGH_TRAFFIC_THRESHOLD = 20;
+    private static final int CRITICAL_TRAFFIC_THRESHOLD = 50;
+
     @RequestMapping("/")
     public String index() {
-        int currentHits = hitCounter.incrementAndGet();
-        String viewName = resolveViewName(currentHits);
+        long startTime = System.currentTimeMillis();
 
-        logRequestMetrics(currentHits, viewName);
+        int currentHits = hitCounter.incrementAndGet();
+        TrafficStatus trafficStatus = evaluateTraffic(currentHits);
+        String viewName = resolveViewName(trafficStatus);
+
+        long responseTimeMs = System.currentTimeMillis() - startTime;
+        logRequestMetrics(currentHits, trafficStatus, viewName, responseTimeMs);
 
         return viewName;
     }
 
     /**
-     * Determines which view to serve based on traffic
+     * Decides which view to serve based on traffic intensity
      */
-    private String resolveViewName(int hits) {
-        // Example: route heavy traffic to a lightweight landing page
-        if (hits % 5 == 0) {
-            return "index-lite";
+    private String resolveViewName(TrafficStatus status) {
+        switch (status) {
+            case CRITICAL:
+                return "index-lite";   // ultra-light page
+            case HIGH:
+                return "index-cached"; // CDN / cached version
+            default:
+                return "index";
         }
-        return "index";
     }
 
     /**
-     * Logs meaningful request analytics
+     * Evaluates current traffic state
      */
-    private void logRequestMetrics(int hits, String viewName) {
+    private TrafficStatus evaluateTraffic(int hits) {
+        if (hits >= CRITICAL_TRAFFIC_THRESHOLD) {
+            return TrafficStatus.CRITICAL;
+        } else if (hits >= HIGH_TRAFFIC_THRESHOLD) {
+            return TrafficStatus.HIGH;
+        }
+        return TrafficStatus.NORMAL;
+    }
+
+    /**
+     * Logs structured request analytics
+     */
+    private void logRequestMetrics(
+            int hits,
+            TrafficStatus status,
+            String viewName,
+            long responseTimeMs
+    ) {
         System.out.printf(
-                "🏈 [%s] Home hit #%d | Serving view: %s%n",
+                "🏈 [%s] HomeHit=%d | Traffic=%s | View=%s | ResponseTime=%dms%n",
                 LocalDateTime.now(),
                 hits,
-                viewName
+                status,
+                viewName,
+                responseTimeMs
         );
+    }
+
+    /**
+     * Traffic classification enum
+     */
+    private enum TrafficStatus {
+        NORMAL,
+        HIGH,
+        CRITICAL
     }
 }
