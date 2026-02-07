@@ -2,9 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Boot App</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: linear-gradient(135deg, #6db3f2, #1e69de);
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            background: rgba(0, 0, 0, 0.25);
+            padding: 40px 50px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        p {
+            margin-bottom: 25px;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 22px;
+            border-radius: 6px;
+            background: #ffffff;
+            color: #1e69de;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #e6e6e6;
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
-    <h1>Hello Spring Boot</h1>
+    <div class="container">
+        <h1>Hello Spring Boot 🚀</h1>
+        <p>Your Spring Boot application is up and running.</p>
+        <a href="/actuator/health" class="btn">Check App Health</a>
+    </div>
 </body>
 </html>
